@@ -6,7 +6,8 @@ AS=$(CROSS)as
 STRIP=$(CROSS)strip
 
 LV1_DIR=source/lv1
-GITREV='$(shell git describe --tags $(shell git rev-list --tags --max-count=1))'
+#GITREV='$(shell git describe --tags $(shell git rev-list --tags --max-count=1))'
+GITREV='$(git describe --tags $(git rev-list --tags --max-count=1 $(git rev-parse --abbrev-ref HEAD)))'
 
 # Configuration
 CFLAGS = -Wall -Os -I$(LV1_DIR) -ffunction-sections -fdata-sections \
@@ -35,7 +36,7 @@ clean:
 	@echo Cleaning...
 	@$(MAKE) --no-print-directory -f Makefile_lv2.mk clean
 	@rm -rf $(OBJS) $(foreach name,$(TARGETS),$(addprefix $(name).,bin elf)) stage2.elf32.gz stage2.elf32.7z
-	
+
 dist: clean all
 	@rm XeLL_Reloaded-2stages-*.tar.gz
 	@mkdir -p release/_DEBUG
@@ -47,7 +48,7 @@ dist: clean all
 	@cp CHANGELOG release/
 	@cp README release/
 	@cd release; tar czvf XeLL_Reloaded-2stages-$(GITREV).tar.gz *; mv *.tar.gz ..
-	@rm -rf release 
+	@rm -rf release
 	@$(MAKE) clean
 
 %.build:
